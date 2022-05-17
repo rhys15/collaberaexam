@@ -25,12 +25,12 @@ public class AccountController {
     AccountService accountService;
 
     @GetMapping("/account")
-    private Iterable<com.collabera.exam.model.Account> getAllAccount() {
+    public Iterable<com.collabera.exam.model.Account> getAllAccount() {
         return accountService.findAll();
     }
 
     @GetMapping("/account/{id}")
-    private ResponseEntity<AccountResponse> getAccount(@PathVariable("id") int id) {
+    public ResponseEntity<AccountResponse> getAccount(@PathVariable("id") int id) {
         try {
             Account account = accountService.getAccountById(id);
             AccountResponse reponse = AccountResponse.builder().account(account).transactionStatusCode(302).transactionStatusDescription("Customer Account found").build();
@@ -42,12 +42,12 @@ public class AccountController {
     }
 
     @DeleteMapping("/account/{id}")
-    private void Account(@PathVariable("id") int id) {
+    public void Account(@PathVariable("id") int id) {
         accountService.delete(id);
     }
 
     @PostMapping("/account")
-    private ResponseEntity<AccountResponse> saveAccount(@RequestBody Account account) {
+    public ResponseEntity<AccountResponse> saveAccount(@RequestBody Account account) {
         AccountResponse validateAccountResponse = validateInput(account);
         if (ObjectUtils.isNotEmpty(validateAccountResponse)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validateAccountResponse);
@@ -57,7 +57,7 @@ public class AccountController {
         AccountResponse response = null;
         if (null != savedAccount) {
             response =  AccountResponse.builder().transactionStatusCode(201).customerNumber(Integer.toString(savedAccount.getCustomerNumber())).transactionStatusDescription("Customer account created").build();
-            return ResponseEntity.status(HttpStatus.CONTINUE).body(response);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
         response = AccountResponse.builder().transactionStatusCode(400).transactionStatusDescription("error").build();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
